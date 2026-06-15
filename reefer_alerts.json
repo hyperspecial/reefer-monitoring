@@ -1,6 +1,510 @@
 {
   "records": [
     {
+      "time": "2026-06-15T15:06:30.406Z",
+      "id": "MSC-IOT-404",
+      "cargo": "Pharmaceuticals",
+      "icon": "💊",
+      "msg": "[MSC-IOT-404] Pharmaceuticals — 6.07°C exceeds 6°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:06:25.987Z",
+      "id": "MSC-IOT-606",
+      "cargo": "Meat & Poultry",
+      "icon": "🥩",
+      "msg": "[MSC-IOT-606] Meat & Poultry — 3.55°C exceeds 3.5°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:06:23.892Z",
+      "id": "MSC-IOT-202",
+      "cargo": "Dairy",
+      "icon": "🧀",
+      "msg": "[MSC-IOT-202] Dairy — 5.16°C exceeds 5°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:06:23.888Z",
+      "id": "MSC-IOT-505",
+      "cargo": "Beverages",
+      "icon": "🍺",
+      "msg": "[MSC-IOT-505] Beverages — 8.81°C exceeds 7.5°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:06:22.403Z",
+      "id": "MSC-IOT-404",
+      "cargo": "Pharmaceuticals",
+      "icon": "💊",
+      "msg": "[MSC-IOT-404] Pharmaceuticals — 7.69°C exceeds 6°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:06:20.402Z",
+      "id": "MSC-IOT-404",
+      "cargo": "Pharmaceuticals",
+      "icon": "💊",
+      "msg": "[MSC-IOT-404] Pharmaceuticals — 7.26°C exceeds 6°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:06:18.402Z",
+      "id": "MSC-IOT-404",
+      "cargo": "Pharmaceuticals",
+      "icon": "💊",
+      "msg": "[MSC-IOT-404] Pharmaceuticals — 6.21°C exceeds 6°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:06:16.885Z",
+      "id": "MSC-IOT-505",
+      "cargo": "Beverages",
+      "icon": "🍺",
+      "msg": "[MSC-IOT-505] Beverages — 8.15°C exceeds 7.5°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:06:16.389Z",
+      "id": "MSC-IOT-101",
+      "cargo": "Fresh Produce",
+      "icon": "🥦",
+      "msg": "[MSC-IOT-101] Fresh Produce — 5.63°C exceeds 5.5°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:06:16.387Z",
+      "id": "MSC-IOT-202",
+      "cargo": "Dairy",
+      "icon": "🧀",
+      "msg": "[MSC-IOT-202] Dairy — 5.06°C exceeds 5°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:06:14.402Z",
+      "id": "MSC-IOT-404",
+      "cargo": "Pharmaceuticals",
+      "icon": "💊",
+      "msg": "[MSC-IOT-404] Pharmaceuticals — 7.54°C exceeds 6°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:06:13.383Z",
+      "id": "MSC-IOT-505",
+      "cargo": "Beverages",
+      "icon": "🍺",
+      "msg": "[MSC-IOT-505] Beverages — 8.56°C exceeds 7.5°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:06:06.382Z",
+      "id": "MSC-IOT-202",
+      "cargo": "Dairy",
+      "icon": "🧀",
+      "msg": "[MSC-IOT-202] Dairy — 5.61°C exceeds 5°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:06:04.402Z",
+      "id": "MSC-IOT-404",
+      "cargo": "Pharmaceuticals",
+      "icon": "💊",
+      "msg": "[MSC-IOT-404] Pharmaceuticals — 6.22°C exceeds 6°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:06:04.383Z",
+      "id": "MSC-IOT-101",
+      "cargo": "Fresh Produce",
+      "icon": "🥦",
+      "msg": "[MSC-IOT-101] Fresh Produce — 5.69°C exceeds 5.5°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:06:02.879Z",
+      "id": "MSC-IOT-505",
+      "cargo": "Beverages",
+      "icon": "🍺",
+      "msg": "[MSC-IOT-505] Beverages — 7.73°C exceeds 7.5°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:06:02.380Z",
+      "id": "MSC-IOT-101",
+      "cargo": "Fresh Produce",
+      "icon": "🥦",
+      "msg": "[MSC-IOT-101] Fresh Produce — 5.61°C exceeds 5.5°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:05:58.399Z",
+      "id": "MSC-IOT-404",
+      "cargo": "Pharmaceuticals",
+      "icon": "💊",
+      "msg": "[MSC-IOT-404] Pharmaceuticals — 6.38°C exceeds 6°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:05:52.397Z",
+      "id": "MSC-IOT-404",
+      "cargo": "Pharmaceuticals",
+      "icon": "💊",
+      "msg": "[MSC-IOT-404] Pharmaceuticals — 6.89°C exceeds 6°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:05:50.396Z",
+      "id": "MSC-IOT-404",
+      "cargo": "Pharmaceuticals",
+      "icon": "💊",
+      "msg": "[MSC-IOT-404] Pharmaceuticals — 6.22°C exceeds 6°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:05:48.874Z",
+      "id": "MSC-IOT-202",
+      "cargo": "Dairy",
+      "icon": "🧀",
+      "msg": "[MSC-IOT-202] Dairy — 5.2°C exceeds 5°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:05:48.395Z",
+      "id": "MSC-IOT-404",
+      "cargo": "Pharmaceuticals",
+      "icon": "💊",
+      "msg": "[MSC-IOT-404] Pharmaceuticals — 7.21°C exceeds 6°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:05:48.376Z",
+      "id": "MSC-IOT-101",
+      "cargo": "Fresh Produce",
+      "icon": "🥦",
+      "msg": "[MSC-IOT-101] Fresh Produce — 5.66°C exceeds 5.5°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:05:46.394Z",
+      "id": "MSC-IOT-404",
+      "cargo": "Pharmaceuticals",
+      "icon": "💊",
+      "msg": "[MSC-IOT-404] Pharmaceuticals — 6.08°C exceeds 6°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:05:42.392Z",
+      "id": "MSC-IOT-404",
+      "cargo": "Pharmaceuticals",
+      "icon": "💊",
+      "msg": "[MSC-IOT-404] Pharmaceuticals — 6.82°C exceeds 6°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:05:40.392Z",
+      "id": "MSC-IOT-404",
+      "cargo": "Pharmaceuticals",
+      "icon": "💊",
+      "msg": "[MSC-IOT-404] Pharmaceuticals — 7.26°C exceeds 6°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:05:38.372Z",
+      "id": "MSC-IOT-101",
+      "cargo": "Fresh Produce",
+      "icon": "🥦",
+      "msg": "[MSC-IOT-101] Fresh Produce — 5.95°C exceeds 5.5°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:05:34.868Z",
+      "id": "MSC-IOT-505",
+      "cargo": "Beverages",
+      "icon": "🍺",
+      "msg": "[MSC-IOT-505] Beverages — 8.94°C exceeds 7.5°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:05:32.388Z",
+      "id": "MSC-IOT-404",
+      "cargo": "Pharmaceuticals",
+      "icon": "💊",
+      "msg": "[MSC-IOT-404] Pharmaceuticals — 6.73°C exceeds 6°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:05:31.369Z",
+      "id": "MSC-IOT-202",
+      "cargo": "Dairy",
+      "icon": "🧀",
+      "msg": "[MSC-IOT-202] Dairy — 5.01°C exceeds 5°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:05:29.967Z",
+      "id": "MSC-IOT-606",
+      "cargo": "Meat & Poultry",
+      "icon": "🥩",
+      "msg": "[MSC-IOT-606] Meat & Poultry — 3.68°C exceeds 3.5°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:05:25.365Z",
+      "id": "MSC-IOT-303",
+      "cargo": "Frozen Seafood",
+      "icon": "🐟",
+      "msg": "[MSC-IOT-303] Frozen Seafood — 2.03°C exceeds 2°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:05:24.365Z",
+      "id": "MSC-IOT-606",
+      "cargo": "Meat & Poultry",
+      "icon": "🥩",
+      "msg": "[MSC-IOT-606] Meat & Poultry — 3.75°C exceeds 3.5°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:05:22.366Z",
+      "id": "MSC-IOT-101",
+      "cargo": "Fresh Produce",
+      "icon": "🥦",
+      "msg": "[MSC-IOT-101] Fresh Produce — 5.61°C exceeds 5.5°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:05:21.366Z",
+      "id": "MSC-IOT-202",
+      "cargo": "Dairy",
+      "icon": "🧀",
+      "msg": "[MSC-IOT-202] Dairy — 5.19°C exceeds 5°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:05:20.385Z",
+      "id": "MSC-IOT-404",
+      "cargo": "Pharmaceuticals",
+      "icon": "💊",
+      "msg": "[MSC-IOT-404] Pharmaceuticals — 7.4°C exceeds 6°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:05:18.864Z",
+      "id": "MSC-IOT-202",
+      "cargo": "Dairy",
+      "icon": "🧀",
+      "msg": "[MSC-IOT-202] Dairy — 5.73°C exceeds 5°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:05:18.385Z",
+      "id": "MSC-IOT-404",
+      "cargo": "Pharmaceuticals",
+      "icon": "💊",
+      "msg": "[MSC-IOT-404] Pharmaceuticals — 6.91°C exceeds 6°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:05:12.383Z",
+      "id": "MSC-IOT-404",
+      "cargo": "Pharmaceuticals",
+      "icon": "💊",
+      "msg": "[MSC-IOT-404] Pharmaceuticals — 7.35°C exceeds 6°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:05:12.362Z",
+      "id": "MSC-IOT-101",
+      "cargo": "Fresh Produce",
+      "icon": "🥦",
+      "msg": "[MSC-IOT-101] Fresh Produce — 5.75°C exceeds 5.5°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:05:10.364Z",
+      "id": "MSC-IOT-404",
+      "cargo": "Pharmaceuticals",
+      "icon": "💊",
+      "msg": "[MSC-IOT-404] Pharmaceuticals — 7.35°C exceeds 6°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:05:06.361Z",
+      "id": "MSC-IOT-404",
+      "cargo": "Pharmaceuticals",
+      "icon": "💊",
+      "msg": "[MSC-IOT-404] Pharmaceuticals — 7.37°C exceeds 6°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:05:04.359Z",
+      "id": "MSC-IOT-303",
+      "cargo": "Frozen Seafood",
+      "icon": "🐟",
+      "msg": "[MSC-IOT-303] Frozen Seafood — 2.77°C exceeds 2°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:05:03.858Z",
+      "id": "MSC-IOT-202",
+      "cargo": "Dairy",
+      "icon": "🧀",
+      "msg": "[MSC-IOT-202] Dairy — 5.87°C exceeds 5°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:05:00.360Z",
+      "id": "MSC-IOT-404",
+      "cargo": "Pharmaceuticals",
+      "icon": "💊",
+      "msg": "[MSC-IOT-404] Pharmaceuticals — 6.03°C exceeds 6°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:05:00.359Z",
+      "id": "MSC-IOT-101",
+      "cargo": "Fresh Produce",
+      "icon": "🥦",
+      "msg": "[MSC-IOT-101] Fresh Produce — 5.63°C exceeds 5.5°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:04:56.358Z",
+      "id": "MSC-IOT-404",
+      "cargo": "Pharmaceuticals",
+      "icon": "💊",
+      "msg": "[MSC-IOT-404] Pharmaceuticals — 6.13°C exceeds 6°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:04:54.357Z",
+      "id": "MSC-IOT-404",
+      "cargo": "Pharmaceuticals",
+      "icon": "💊",
+      "msg": "[MSC-IOT-404] Pharmaceuticals — 6.94°C exceeds 6°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:04:53.855Z",
+      "id": "MSC-IOT-202",
+      "cargo": "Dairy",
+      "icon": "🧀",
+      "msg": "[MSC-IOT-202] Dairy — 5.81°C exceeds 5°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:04:52.853Z",
+      "id": "MSC-IOT-505",
+      "cargo": "Beverages",
+      "icon": "🍺",
+      "msg": "[MSC-IOT-505] Beverages — 7.84°C exceeds 7.5°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:04:52.356Z",
+      "id": "MSC-IOT-404",
+      "cargo": "Pharmaceuticals",
+      "icon": "💊",
+      "msg": "[MSC-IOT-404] Pharmaceuticals — 6.19°C exceeds 6°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:04:50.356Z",
+      "id": "MSC-IOT-404",
+      "cargo": "Pharmaceuticals",
+      "icon": "💊",
+      "msg": "[MSC-IOT-404] Pharmaceuticals — 7.62°C exceeds 6°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:04:48.355Z",
+      "id": "MSC-IOT-404",
+      "cargo": "Pharmaceuticals",
+      "icon": "💊",
+      "msg": "[MSC-IOT-404] Pharmaceuticals — 6.62°C exceeds 6°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:04:43.853Z",
+      "id": "MSC-IOT-202",
+      "cargo": "Dairy",
+      "icon": "🧀",
+      "msg": "[MSC-IOT-202] Dairy — 5.77°C exceeds 5°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:04:42.351Z",
+      "id": "MSC-IOT-101",
+      "cargo": "Fresh Produce",
+      "icon": "🥦",
+      "msg": "[MSC-IOT-101] Fresh Produce — 5.73°C exceeds 5.5°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:04:42.350Z",
+      "id": "MSC-IOT-505",
+      "cargo": "Beverages",
+      "icon": "🍺",
+      "msg": "[MSC-IOT-505] Beverages — 8.13°C exceeds 7.5°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:04:40.352Z",
+      "id": "MSC-IOT-101",
+      "cargo": "Fresh Produce",
+      "icon": "🥦",
+      "msg": "[MSC-IOT-101] Fresh Produce — 5.51°C exceeds 5.5°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:04:37.348Z",
+      "id": "MSC-IOT-303",
+      "cargo": "Frozen Seafood",
+      "icon": "🐟",
+      "msg": "[MSC-IOT-303] Frozen Seafood — 2.58°C exceeds 2°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:04:36.351Z",
+      "id": "MSC-IOT-404",
+      "cargo": "Pharmaceuticals",
+      "icon": "💊",
+      "msg": "[MSC-IOT-404] Pharmaceuticals — 7.17°C exceeds 6°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:04:34.350Z",
+      "id": "MSC-IOT-101",
+      "cargo": "Fresh Produce",
+      "icon": "🥦",
+      "msg": "[MSC-IOT-101] Fresh Produce — 5.58°C exceeds 5.5°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:04:34.347Z",
+      "id": "MSC-IOT-303",
+      "cargo": "Frozen Seafood",
+      "icon": "🐟",
+      "msg": "[MSC-IOT-303] Frozen Seafood — 2.92°C exceeds 2°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:04:32.350Z",
+      "id": "MSC-IOT-101",
+      "cargo": "Fresh Produce",
+      "icon": "🥦",
+      "msg": "[MSC-IOT-101] Fresh Produce — 5.74°C exceeds 5.5°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:04:28.346Z",
+      "id": "MSC-IOT-505",
+      "cargo": "Beverages",
+      "icon": "🍺",
+      "msg": "[MSC-IOT-505] Beverages — 7.53°C exceeds 7.5°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:04:26.348Z",
+      "id": "MSC-IOT-404",
+      "cargo": "Pharmaceuticals",
+      "icon": "💊",
+      "msg": "[MSC-IOT-404] Pharmaceuticals — 7.03°C exceeds 6°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:04:26.347Z",
+      "id": "MSC-IOT-101",
+      "cargo": "Fresh Produce",
+      "icon": "🥦",
+      "msg": "[MSC-IOT-101] Fresh Produce — 5.68°C exceeds 5.5°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:04:24.346Z",
+      "id": "MSC-IOT-404",
+      "cargo": "Pharmaceuticals",
+      "icon": "💊",
+      "msg": "[MSC-IOT-404] Pharmaceuticals — 6.51°C exceeds 6°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:04:18.343Z",
+      "id": "MSC-IOT-101",
+      "cargo": "Fresh Produce",
+      "icon": "🥦",
+      "msg": "[MSC-IOT-101] Fresh Produce — 5.88°C exceeds 5.5°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:04:14.342Z",
+      "id": "MSC-IOT-404",
+      "cargo": "Pharmaceuticals",
+      "icon": "💊",
+      "msg": "[MSC-IOT-404] Pharmaceuticals — 7.41°C exceeds 6°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:04:14.337Z",
+      "id": "MSC-IOT-505",
+      "cargo": "Beverages",
+      "icon": "🍺",
+      "msg": "[MSC-IOT-505] Beverages — 8.25°C exceeds 7.5°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:04:12.342Z",
+      "id": "MSC-IOT-404",
+      "cargo": "Pharmaceuticals",
+      "icon": "💊",
+      "msg": "[MSC-IOT-404] Pharmaceuticals — 7.6°C exceeds 6°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:04:12.341Z",
+      "id": "MSC-IOT-101",
+      "cargo": "Fresh Produce",
+      "icon": "🥦",
+      "msg": "[MSC-IOT-101] Fresh Produce — 5.97°C exceeds 5.5°C threshold"
+    },
+    {
+      "time": "2026-06-15T15:04:10.835Z",
+      "id": "MSC-IOT-505",
+      "cargo": "Beverages",
+      "icon": "🍺",
+      "msg": "[MSC-IOT-505] Beverages — 7.68°C exceeds 7.5°C threshold"
+    },
+    {
       "time": "2026-06-15T15:04:10.341Z",
       "id": "MSC-IOT-404",
       "cargo": "Pharmaceuticals",
@@ -323,6 +827,6 @@
       "msg": "[MSC-IOT-303] Frozen Seafood — 2.76°C exceeds 2°C threshold"
     }
   ],
-  "totalEver": 46,
-  "lastUpdated": "2026-06-15T15:04:10.341Z"
+  "totalEver": 118,
+  "lastUpdated": "2026-06-15T15:06:30.406Z"
 }
