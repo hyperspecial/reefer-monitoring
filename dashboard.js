@@ -1,27 +1,34 @@
 /**
- * Reefer Monitoring System — Web Dashboard
- * Serves a live telemetry dashboard on port 5000 using SSE.
+ * Reefer Monitoring System — Fleet Dashboard
+ * Tracks multiple containers and serves a live dashboard on port 5000.
  */
 
 const http = require('http');
 const EventEmitter = require('events');
 
-// ─── Reefer IoT Core ────────────────────────────────────────────────────────
+// ─── Reefer IoT Core ─────────────────────────────────────────────────────────
 
 class ReeferIoT extends EventEmitter {
-    constructor(id) {
+    constructor({ id, cargo, tempMin, tempMax, threshold, intervalMs }) {
         super();
-        this.id = id;
-        this.active = true;
+        this.id         = id;
+        this.cargo      = cargo;
+        this.tempMin    = tempMin;
+        this.tempMax    = tempMax;
+        this.threshold  = threshold;
+        this.intervalMs = intervalMs;
+        this.active     = true;
     }
 
     sendTelemetry() {
         if (!this.active) return;
         const data = {
-            id: this.id,
-            timestamp: new Date().toISOString(),
-            temperature: parseFloat((Math.random() * 5 + 2).toFixed(2)),
-            humidity: parseFloat((Math.random() * 20 + 70).toFixed(2)),
+            id:          this.id,
+            cargo:       this.cargo,
+            threshold:   this.threshold,
+            timestamp:   new Date().toISOString(),
+            temperature: parseFloat((Math.random() * (this.tempMax - this.tempMin) + this.tempMin).toFixed(2)),
+            humidity:    parseFloat((Math.random() * 20 + 70).toFixed(2)),
             gps: {
                 lat: parseFloat((Math.random() * 180 - 90).toFixed(4)),
                 lng: parseFloat((Math.random() * 360 - 180).toFixed(4))
@@ -32,36 +39,34 @@ class ReeferIoT extends EventEmitter {
     }
 }
 
-// ─── State ───────────────────────────────────────────────────────────────────
+// ─── Fleet Definition ─────────────────────────────────────────────────────────
 
-const history = [];          // last 50 readings
-const alerts = [];           // last 20 alerts
-const sseClients = new Set();
+const FLEET = [
+    { id: 'MSC-IOT-101', cargo: 'Fresh Produce',     tempMin: 2,  tempMax: 6,  threshold: 5.5, intervalMs: 2000 },
+    { id: 'MSC-IOT-202', cargo: 'Dairy',             tempMin: 1,  tempMax: 6,  threshold: 5.0, intervalMs: 2500 },
+    { id: 'MSC-IOT-303', cargo: 'Frozen Seafood',    tempMin: -2, tempMax: 3,  threshold: 2.0, intervalMs: 3000 },
+    { id: 'MSC-IOT-404', cargo: 'Pharmaceuticals',   tempMin: 3,  tempMax: 8,  threshold: 6.0, intervalMs: 2000 },
+    { id: 'MSC-IOT-505', cargo: 'Beverages',         tempMin: 4,  tempMax: 9,  threshold: 7.5, intervalMs: 3500 },
+    { id: 'MSC-IOT-606', cargo: 'Meat & Poultry',    tempMin: -1, tempMax: 4,  threshold: 3.5, intervalMs: 2800 },
+];
 
-const monitoringCenter = new EventEmitter();
-const myReefer = new ReeferIoT('MSC-IOT-404');
+// ─── State ────────────────────────────────────────────────────────────────────
 
-monitoringCenter.on('alert', (msg) => {
-    const entry = { time: new Date().toISOString(), msg };
-    alerts.unshift(entry);
-    if (alerts.length > 20) alerts.pop();
-    broadcast({ type: 'alert', payload: entry });
-});
+const fleetState  = {};   // latest reading per container
+const alerts      = [];   // last 30 fleet-wide alerts
+const sseClients  = new Set();
+let   totalAlerts = 0;
+let   totalReadings = 0;
 
-myReefer.on('telemetry', (data) => {
-    history.unshift(data);
-    if (history.length > 50) history.pop();
-    broadcast({ type: 'telemetry', payload: data });
+for (const cfg of FLEET) {
+    fleetState[cfg.id] = {
+        id: cfg.id, cargo: cfg.cargo, threshold: cfg.threshold,
+        temperature: null, humidity: null, gps: null,
+        timestamp: null, alertCount: 0, status: 'waiting'
+    };
+}
 
-    if (data.temperature > 6.0) {
-        monitoringCenter.emit('alert',
-            `Container ${data.id} temperature critical: ${data.temperature}°C`);
-    }
-});
-
-setInterval(() => myReefer.sendTelemetry(), 2000);
-
-// ─── SSE broadcast ───────────────────────────────────────────────────────────
+// ─── SSE broadcast ────────────────────────────────────────────────────────────
 
 function broadcast(obj) {
     const line = `data: ${JSON.stringify(obj)}\n\n`;
@@ -70,6 +75,50 @@ function broadcast(obj) {
     }
 }
 
+// ─── Monitoring Logic ─────────────────────────────────────────────────────────
+
+const monitoringCenter = new EventEmitter();
+
+monitoringCenter.on('alert', ({ id, msg, cargo }) => {
+    totalAlerts++;
+    fleetState[id].alertCount++;
+    const entry = { time: new Date().toISOString(), id, cargo, msg };
+    alerts.unshift(entry);
+    if (alerts.length > 30) alerts.pop();
+    broadcast({ type: 'alert', payload: entry });
+});
+
+function startContainer(cfg) {
+    const reefer = new ReeferIoT(cfg);
+
+    reefer.on('telemetry', (data) => {
+        totalReadings++;
+        const hot = data.temperature > data.threshold;
+        fleetState[data.id] = {
+            ...fleetState[data.id],
+            temperature: data.temperature,
+            humidity:    data.humidity,
+            gps:         data.gps,
+            timestamp:   data.timestamp,
+            status:      hot ? 'critical' : 'ok'
+        };
+        broadcast({ type: 'telemetry', payload: { ...data, totalReadings } });
+
+        if (hot) {
+            monitoringCenter.emit('alert', {
+                id:    data.id,
+                cargo: data.cargo,
+                msg:   `[${data.id}] ${data.cargo} — temp ${data.temperature}°C exceeds ${data.threshold}°C threshold`
+            });
+        }
+    });
+
+    setInterval(() => reefer.sendTelemetry(), cfg.intervalMs);
+    reefer.sendTelemetry(); // immediate first reading
+}
+
+for (const cfg of FLEET) startContainer(cfg);
+
 // ─── HTML ─────────────────────────────────────────────────────────────────────
 
 const HTML = `<!DOCTYPE html>
@@ -77,218 +126,208 @@ const HTML = `<!DOCTYPE html>
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Reefer Monitor</title>
+<title>Fleet Reefer Monitor</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
-    --bg: #0d1117;
-    --card: #161b22;
+    --bg:     #0d1117;
+    --card:   #161b22;
     --border: #30363d;
-    --text: #e6edf3;
-    --muted: #8b949e;
-    --blue: #58a6ff;
-    --green: #3fb950;
-    --red: #f85149;
-    --yellow: #d29922;
+    --text:   #e6edf3;
+    --muted:  #8b949e;
+    --blue:   #58a6ff;
+    --green:  #3fb950;
+    --red:    #f85149;
     --orange: #e3b341;
+    --purple: #bc8cff;
   }
-
   body {
     background: var(--bg);
     color: var(--text);
     font-family: 'Segoe UI', system-ui, sans-serif;
     min-height: 100vh;
-    padding: 24px 20px;
+    padding: 22px 20px;
   }
 
+  /* ── Header ── */
   header {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
     gap: 12px;
-    margin-bottom: 28px;
+    margin-bottom: 24px;
   }
-  header h1 { font-size: 1.4rem; font-weight: 600; }
+  .header-left { display: flex; align-items: center; gap: 12px; }
+  header h1 { font-size: 1.35rem; font-weight: 600; }
   .badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.75rem;
-    background: #1c2a1c;
-    color: var(--green);
-    border: 1px solid #2d4a2d;
-    border-radius: 20px;
-    padding: 3px 10px;
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 0.75rem; background: #1c2a1c; color: var(--green);
+    border: 1px solid #2d4a2d; border-radius: 20px; padding: 3px 10px;
   }
-  .dot {
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    background: var(--green);
-    animation: pulse 1.5s infinite;
-  }
-  @keyframes pulse {
-    0%,100% { opacity: 1; }
-    50% { opacity: 0.3; }
-  }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
 
-  .grid {
+  /* ── Summary stats ── */
+  .stats-row {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 14px;
-    margin-bottom: 28px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 22px;
   }
-  .stat-card {
+  @media (max-width: 600px) { .stats-row { grid-template-columns: repeat(2, 1fr); } }
+  .stat {
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: 10px;
-    padding: 18px 16px;
+    padding: 16px 14px;
   }
-  .stat-card .label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 8px; }
-  .stat-card .value { font-size: 2rem; font-weight: 700; line-height: 1; }
-  .stat-card .unit  { font-size: 0.85rem; color: var(--muted); margin-top: 4px; }
-  .temp-ok  { color: var(--blue); }
-  .temp-hot { color: var(--red); animation: flash .6s infinite alternate; }
-  @keyframes flash { from { opacity: 1; } to { opacity: 0.5; } }
-  .hum-val { color: var(--blue); }
-  .gps-val { font-size: 1.1rem; color: var(--orange); }
+  .stat .lbl { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
+  .stat .val { font-size: 1.75rem; font-weight: 700; line-height: 1; }
 
-  .panels {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 18px;
-  }
-  @media (max-width: 680px) { .panels { grid-template-columns: 1fr; } }
-
+  /* ── Fleet table ── */
   .panel {
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: 10px;
     overflow: hidden;
+    margin-bottom: 20px;
   }
   .panel-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 16px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 11px 16px;
     border-bottom: 1px solid var(--border);
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: .06em;
+    font-size: 0.8rem; font-weight: 600;
+    color: var(--muted); text-transform: uppercase; letter-spacing: .06em;
   }
-  .panel-header span { color: var(--muted); font-weight: 400; font-size: 0.75rem; }
+  .panel-header span { font-weight: 400; font-size: 0.72rem; }
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.82rem;
-  }
+  table { width: 100%; border-collapse: collapse; font-size: 0.81rem; }
   thead th {
-    background: #0d1117;
-    color: var(--muted);
-    font-weight: 500;
-    text-align: left;
-    padding: 8px 14px;
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: .05em;
+    background: #0d1117; color: var(--muted); font-weight: 500;
+    text-align: left; padding: 8px 14px;
+    font-size: 0.72rem; text-transform: uppercase; letter-spacing: .05em;
   }
-  tbody tr { border-top: 1px solid var(--border); }
+  tbody tr { border-top: 1px solid var(--border); transition: background .15s; }
   tbody tr:hover { background: #1c2330; }
-  tbody td { padding: 7px 14px; }
-  .ok  { color: var(--green); }
-  .hot { color: var(--red); }
+  tbody td { padding: 9px 14px; }
+  td.id-cell { font-family: monospace; font-size: 0.8rem; color: var(--blue); }
+  td.cargo-cell { color: var(--muted); font-size: 0.78rem; }
 
-  #alerts-list { list-style: none; max-height: 240px; overflow-y: auto; }
-  #alerts-list li {
-    display: flex;
-    gap: 10px;
-    align-items: flex-start;
-    padding: 10px 16px;
-    border-top: 1px solid var(--border);
-    font-size: 0.83rem;
+  .temp-ok  { color: var(--green); font-weight: 600; }
+  .temp-hot { color: var(--red);   font-weight: 700; animation: flash .7s infinite alternate; }
+  @keyframes flash { from{opacity:1} to{opacity:.45} }
+  .hum-val  { color: var(--blue); }
+  .gps-val  { color: var(--orange); font-size: 0.76rem; }
+
+  .pill {
+    display: inline-block; padding: 2px 9px; border-radius: 12px;
+    font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .05em;
   }
-  #alerts-list li:first-child { border-top: none; }
-  .alert-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
-  .alert-time { color: var(--muted); font-size: 0.72rem; white-space: nowrap; }
-  .no-alerts  { color: var(--muted); padding: 20px 16px; font-size: 0.85rem; }
+  .pill-ok       { background: #1a2e1a; color: var(--green); border: 1px solid #2d4a2d; }
+  .pill-critical { background: #2e1a1a; color: var(--red);   border: 1px solid #4a2d2d; animation: flash .7s infinite alternate; }
+  .pill-waiting  { background: #1e1e2e; color: var(--muted); border: 1px solid var(--border); }
+
+  /* ── Alerts ── */
+  .alerts-list { list-style: none; max-height: 260px; overflow-y: auto; }
+  .alerts-list li {
+    display: flex; gap: 10px; align-items: flex-start;
+    padding: 9px 16px; border-top: 1px solid var(--border); font-size: 0.81rem;
+  }
+  .alerts-list li:first-child { border-top: none; }
+  .alert-icon { flex-shrink: 0; font-size: 0.95rem; margin-top: 2px; }
+  .alert-body { flex: 1; min-width: 0; }
+  .alert-id   { font-family: monospace; font-size: 0.72rem; color: var(--blue); margin-bottom: 2px; }
+  .alert-msg  { color: var(--text); word-break: break-word; }
+  .alert-time { color: var(--muted); font-size: 0.7rem; margin-top: 2px; }
+  .no-alerts  { color: var(--muted); padding: 20px 16px; font-size: 0.83rem; }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>🌡️ Reefer Monitor</h1>
-  <div class="badge"><div class="dot"></div>Live — MSC-IOT-404</div>
+  <div class="header-left">
+    <h1>🚢 Fleet Reefer Monitor</h1>
+    <div class="badge"><div class="dot"></div>Live Stream</div>
+  </div>
 </header>
 
-<div class="grid">
-  <div class="stat-card">
-    <div class="label">Temperature</div>
-    <div class="value temp-ok" id="temp">—</div>
-    <div class="unit">°C</div>
+<div class="stats-row">
+  <div class="stat">
+    <div class="lbl">Containers</div>
+    <div class="val" id="s-fleet" style="color:var(--blue)">${FLEET.length}</div>
   </div>
-  <div class="stat-card">
-    <div class="label">Humidity</div>
-    <div class="value hum-val" id="hum">—</div>
-    <div class="unit">%</div>
+  <div class="stat">
+    <div class="lbl">Active Alerts</div>
+    <div class="val" id="s-alerts" style="color:var(--red)">0</div>
   </div>
-  <div class="stat-card">
-    <div class="label">Latitude</div>
-    <div class="value gps-val" id="lat">—</div>
-    <div class="unit">deg</div>
+  <div class="stat">
+    <div class="lbl">Total Readings</div>
+    <div class="val" id="s-readings" style="color:var(--green)">0</div>
   </div>
-  <div class="stat-card">
-    <div class="label">Longitude</div>
-    <div class="value gps-val" id="lng">—</div>
-    <div class="unit">deg</div>
-  </div>
-  <div class="stat-card">
-    <div class="label">Readings</div>
-    <div class="value" id="count" style="color:var(--blue)">0</div>
-    <div class="unit">logged</div>
-  </div>
-  <div class="stat-card">
-    <div class="label">Alerts</div>
-    <div class="value" id="alert-count" style="color:var(--red)">0</div>
-    <div class="unit">triggered</div>
+  <div class="stat">
+    <div class="lbl">Critical Now</div>
+    <div class="val" id="s-critical" style="color:var(--orange)">0</div>
   </div>
 </div>
 
-<div class="panels">
-  <div class="panel">
-    <div class="panel-header">Recent Readings <span id="hist-count"></span></div>
-    <table>
-      <thead><tr>
-        <th>Time</th><th>Temp °C</th><th>Hum %</th>
-      </tr></thead>
-      <tbody id="hist-body"></tbody>
-    </table>
-  </div>
+<div class="panel">
+  <div class="panel-header">Fleet Status <span id="fleet-sub"></span></div>
+  <table>
+    <thead><tr>
+      <th>Container ID</th>
+      <th>Cargo</th>
+      <th>Temp °C</th>
+      <th>Threshold</th>
+      <th>Humidity %</th>
+      <th>GPS</th>
+      <th>Last Seen</th>
+      <th>Status</th>
+    </tr></thead>
+    <tbody id="fleet-body">
+      ${FLEET.map(c => `
+      <tr id="row-${c.id.replace(/-/g,'_')}">
+        <td class="id-cell">${c.id}</td>
+        <td class="cargo-cell">${c.cargo}</td>
+        <td class="temp-ok" id="t-${c.id.replace(/-/g,'_')}">—</td>
+        <td style="color:var(--muted)">${c.threshold}°C</td>
+        <td class="hum-val" id="h-${c.id.replace(/-/g,'_')}">—</td>
+        <td class="gps-val" id="g-${c.id.replace(/-/g,'_')}">—</td>
+        <td style="color:var(--muted);font-size:.75rem" id="ts-${c.id.replace(/-/g,'_')}">—</td>
+        <td id="st-${c.id.replace(/-/g,'_')}"><span class="pill pill-waiting">Waiting</span></td>
+      </tr>`).join('')}
+    </tbody>
+  </table>
+</div>
 
-  <div class="panel">
-    <div class="panel-header">Alerts <span id="alrt-count"></span></div>
-    <ul id="alerts-list"><li class="no-alerts">No alerts yet</li></ul>
-  </div>
+<div class="panel">
+  <div class="panel-header">Fleet Alerts <span id="alrt-sub"></span></div>
+  <ul class="alerts-list" id="alerts-list">
+    <li class="no-alerts">No alerts yet — all containers within thresholds.</li>
+  </ul>
 </div>
 
 <script>
-  let readingCount = 0;
-  let alertCount   = 0;
+  let totalAlerts   = 0;
+  let totalReadings = 0;
 
-  const tempEl  = document.getElementById('temp');
-  const humEl   = document.getElementById('hum');
-  const latEl   = document.getElementById('lat');
-  const lngEl   = document.getElementById('lng');
-  const cntEl   = document.getElementById('count');
-  const aCountEl= document.getElementById('alert-count');
-  const histBody= document.getElementById('hist-body');
-  const alertsList = document.getElementById('alerts-list');
-  const histCount  = document.getElementById('hist-count');
-  const alrtCount  = document.getElementById('alrt-count');
+  const sAlerts   = document.getElementById('s-alerts');
+  const sReadings = document.getElementById('s-readings');
+  const sCritical = document.getElementById('s-critical');
+  const fleetSub  = document.getElementById('fleet-sub');
+  const alrtSub   = document.getElementById('alrt-sub');
+  const alertsList= document.getElementById('alerts-list');
 
-  function fmtTime(iso) {
-    return new Date(iso).toLocaleTimeString();
+  function key(id) { return id.replace(/-/g, '_'); }
+  function fmtTime(iso) { return new Date(iso).toLocaleTimeString(); }
+
+  function countCritical() {
+    return document.querySelectorAll('.pill-critical').length;
   }
 
   const src = new EventSource('/events');
@@ -297,43 +336,51 @@ const HTML = `<!DOCTYPE html>
     const { type, payload } = JSON.parse(e.data);
 
     if (type === 'telemetry') {
-      const hot = payload.temperature > 6.0;
-      tempEl.textContent = payload.temperature.toFixed(2);
-      tempEl.className   = 'value ' + (hot ? 'temp-hot' : 'temp-ok');
-      humEl.textContent  = payload.humidity.toFixed(2);
-      latEl.textContent  = payload.gps.lat;
-      lngEl.textContent  = payload.gps.lng;
+      const k   = key(payload.id);
+      const hot = payload.temperature > payload.threshold;
 
-      readingCount++;
-      cntEl.textContent = readingCount;
-      histCount.textContent = readingCount + ' total';
+      const tEl  = document.getElementById('t-'  + k);
+      const hEl  = document.getElementById('h-'  + k);
+      const gEl  = document.getElementById('g-'  + k);
+      const tsEl = document.getElementById('ts-' + k);
+      const stEl = document.getElementById('st-' + k);
 
-      const tr = document.createElement('tr');
-      tr.innerHTML =
-        '<td>' + fmtTime(payload.timestamp) + '</td>' +
-        '<td class="' + (hot ? 'hot' : 'ok') + '">' + payload.temperature.toFixed(2) + '</td>' +
-        '<td>' + payload.humidity.toFixed(2) + '</td>';
-      histBody.prepend(tr);
-      // keep last 10 rows visible
-      while (histBody.children.length > 10) histBody.removeChild(histBody.lastChild);
+      if (tEl) {
+        tEl.textContent = payload.temperature.toFixed(2);
+        tEl.className   = hot ? 'temp-hot' : 'temp-ok';
+      }
+      if (hEl)  hEl.textContent  = payload.humidity.toFixed(2);
+      if (gEl)  gEl.textContent  = payload.gps.lat + ', ' + payload.gps.lng;
+      if (tsEl) tsEl.textContent = fmtTime(payload.timestamp);
+      if (stEl) stEl.innerHTML   = hot
+        ? '<span class="pill pill-critical">Critical</span>'
+        : '<span class="pill pill-ok">OK</span>';
+
+      totalReadings = payload.totalReadings || (totalReadings + 1);
+      sReadings.textContent = totalReadings;
+      sCritical.textContent = countCritical();
+      fleetSub.textContent  = totalReadings + ' readings';
     }
 
     if (type === 'alert') {
-      alertCount++;
-      aCountEl.textContent = alertCount;
-      alrtCount.textContent = alertCount + ' total';
+      totalAlerts++;
+      sAlerts.textContent  = totalAlerts;
+      sCritical.textContent = countCritical();
+      alrtSub.textContent  = totalAlerts + ' total';
 
-      // remove placeholder
       const placeholder = alertsList.querySelector('.no-alerts');
       if (placeholder) placeholder.remove();
 
       const li = document.createElement('li');
       li.innerHTML =
         '<span class="alert-icon">🚨</span>' +
-        '<div><div>' + payload.msg + '</div>' +
-        '<div class="alert-time">' + fmtTime(payload.time) + '</div></div>';
+        '<div class="alert-body">' +
+          '<div class="alert-id">' + payload.id + ' — ' + payload.cargo + '</div>' +
+          '<div class="alert-msg">' + payload.msg + '</div>' +
+          '<div class="alert-time">' + fmtTime(payload.time) + '</div>' +
+        '</div>';
       alertsList.prepend(li);
-      while (alertsList.children.length > 20) alertsList.removeChild(alertsList.lastChild);
+      while (alertsList.children.length > 30) alertsList.removeChild(alertsList.lastChild);
     }
   };
 
@@ -364,6 +411,7 @@ const server = http.createServer((req, res) => {
 
 const PORT = 5000;
 server.listen(PORT, '0.0.0.0', () => {
-    console.log(`Reefer Dashboard running → http://0.0.0.0:${PORT}`);
-    console.log('Streaming telemetry every 2 seconds...');
+    console.log(`Fleet Reefer Dashboard → http://0.0.0.0:${PORT}`);
+    console.log(`Monitoring ${FLEET.length} containers...`);
+    FLEET.forEach(c => console.log(`  · ${c.id}  ${c.cargo}  (threshold ${c.threshold}°C)`));
 });
