@@ -1,0 +1,25 @@
+version: "3.9"
+
+services:
+  reefer-monitor:
+    build: .
+    container_name: reefer-monitor
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    volumes:
+      # Persist alert history across container restarts
+      - reefer-data:/app/data
+    environment:
+      - NODE_ENV=production
+      - ALERTS_DIR=/app/data
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:5000/api/fleet"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  reefer-data:
+    driver: local

@@ -25,7 +25,8 @@ const FLEET_CFG = [
 // Alerts are written atomically to reefer_alerts.json (max 1000 records).
 // On restart the full history is loaded back into memory.
 
-const ALERTS_FILE = path.join(__dirname, 'reefer_alerts.json');
+const ALERTS_DIR  = process.env.ALERTS_DIR || __dirname;
+const ALERTS_FILE = path.join(ALERTS_DIR, 'reefer_alerts.json');
 const MAX_STORED  = 1000;
 
 function loadPersistedAlerts() {

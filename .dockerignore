@@ -1,0 +1,22 @@
+# Git
+.git
+.gitignore
+
+# Replit internals
+.replit
+.local
+.cache
+replit.nix
+
+# Compiled C++ binary (rebuilt in container if needed)
+reefer_app
+
+# Node modules (not needed — no npm deps)
+node_modules
+
+# Alert history (use a Docker volume instead)
+reefer_alerts.json
+reefer_alerts.json.tmp
+
+# Logs
+*.log
